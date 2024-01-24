@@ -3,27 +3,29 @@ import time
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew
 from tools.tools import SQLTool
-from langchain_community.llms import Ollama
+from langchain_community.llms import Ollama, GPT4All
 
 
 start = time.time()
 load_dotenv()
 
+path = (
+    "./mistral-7b-openorca.Q4_0.gguf"
+)
+
 # Local language model to use
 # Set temperature parameter to adjust creativity of output, the higher the value the greater the creativity. Set to 0 for reproducible results
-language_model = Ollama(model="stablelm-zephyr", temperature=0)
-# language_model = GPT4All()
+# language_model = Ollama(model="stablelm-zephyr", temperature=0)
+language_model = GPT4All(model=path)
 
-INPUT = "List all the data in the 'aspnetroles' table in the database."
+INPUT = "List all the tables in the database."
 
 
 generator = Agent(
 	role='Make SQL Query',
 	goal='Execute SQL queries to a MySQL database',
 	backstory="""You are an expert at MySQL databases. 
-    	Given a question on a database, you will come up with a series of SQL queries.
-		Then, you MUST query a SQL database to get the result table. 
-		Whenever something is wrong with the SQL query, you MUST query the SQL database again to get the result table.""",
+    	Given a task on a database, you MUST query a SQL database to get table data relavant to the task.""",
 	allow_delegation=False,
     tools=[SQLTool().query],
     verbose=True,
@@ -72,11 +74,13 @@ generator = Agent(
 
 
 task = Task(
-    description=f"""You are given a task about a MySQL database named 'command_centerdb'. 
-		You are to generate SQL queries to retrieve information from the database to fulfil the task.
-		Your FINAL ANSWER must be the result table. 
-		If you do your BEST WORK, I will give you $100000 bonus.
-		The task is: {INPUT}""",
+    # description=f"""You are given a task about a MySQL database named 'command_centerdb'. 
+	# 	You are to generate SQL queries to retrieve information from the database related to the task.
+	# 	Your FINAL ANSWER must be the raw result of the SQL query. 
+	# 	If you do your BEST WORK, I will give you $100000 bonus.
+	# 	The task is: {INPUT}""",
+    description=f"""The task is: {INPUT}
+		Query a SQL database called 'command_centerdb' using the tools provided for the task.""",
     agent=generator
 )
 

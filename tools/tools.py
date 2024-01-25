@@ -17,10 +17,10 @@ class SQLTool():
 		try:
 			cursor.execute(sql_query)
 			result = cursor.fetchall()
-			print("\n###################### QUERY OUTPUT ######################\n")
-			print(result)
+			# print("\n###################### QUERY OUTPUT ######################\n")
+			# print(result)
 		except Exception as e:
-			print(e)
+			# print(e)
 			result = f"Something is wrong with the SQL query, you got the error {e}"
 		finally:
 			cnx.close()

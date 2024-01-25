@@ -18,14 +18,16 @@ load_dotenv()
 # language_model = gpt4all.GPT4All(model=path, device='gpu', n_predict=4096, temp=0, max_tokens=1000)
 
 
-INPUT = "What is aspnetuser Sam's schedules in the database."
+INPUT = "List all the users in the database."
 
 
 generator = Agent(
 	role='Make SQL Query',
 	goal='Query a MySQL database',
-	backstory="""You are an expert at MySQL databases. 
-    	Given a task on a database, you MUST query a MySQL database to get table data relavant to the task.""",
+	backstory="""You are an expert at MySQL relational databases.
+		The database consists of tables that are related through foreign key ids.
+    	Given a task on a database, you MUST first get a list of all the table names in the database.
+        Then, you MUST query the MySQL database to get table data relavant to the task.""",
 	allow_delegation=False,
     tools=[SQLTool().query],
     verbose=True

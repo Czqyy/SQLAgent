@@ -2,34 +2,44 @@ import os
 import time
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew
+# from gpt4all import GPT4All
 from tools.tools import SQLTool
-from langchain_community.llms import Ollama, GPT4All
+from langchain_community.llms import Ollama, gpt4all
 
 
 start = time.time()
 load_dotenv()
 
-path = (
-    "./mistral-7b-openorca.Q4_0.gguf"
-)
+# path = 'D:\Projects\SQLAgent\models\mistral-7b-openorca.Q4_0.gguf'
 
 # Local language model to use
 # Set temperature parameter to adjust creativity of output, the higher the value the greater the creativity. Set to 0 for reproducible results
 # language_model = Ollama(model="stablelm-zephyr", temperature=0)
-language_model = GPT4All(model=path)
+# language_model = gpt4all.GPT4All(model=path, device='gpu', n_predict=4096, temp=0, max_tokens=1000)
 
-INPUT = "List all the tables in the database."
+
+INPUT = "What is aspnetuser Sam's schedules in the database."
 
 
 generator = Agent(
 	role='Make SQL Query',
-	goal='Execute SQL queries to a MySQL database',
+	goal='Query a MySQL database',
 	backstory="""You are an expert at MySQL databases. 
-    	Given a task on a database, you MUST query a SQL database to get table data relavant to the task.""",
+    	Given a task on a database, you MUST query a MySQL database to get table data relavant to the task.""",
 	allow_delegation=False,
     tools=[SQLTool().query],
-    verbose=True,
-	llm=language_model
+    verbose=True
+	# llm=language_model
+)
+
+json_formattor = Agent(
+    role='Format data list to JSON',
+    goal='Return a JSON object',
+    backstory="""You are an expert at converting a list of data to a JSON object.
+    	Given a list of data, you MUST convert it to a JSON object.""",
+    allow_delegation=False,
+    verbose=True
+    # llm=language_model
 )
 
 # summarizer = Agent(
@@ -73,15 +83,19 @@ generator = Agent(
 
 
 
-task = Task(
+task1 = Task(
     # description=f"""You are given a task about a MySQL database named 'command_centerdb'. 
 	# 	You are to generate SQL queries to retrieve information from the database related to the task.
 	# 	Your FINAL ANSWER must be the raw result of the SQL query. 
 	# 	If you do your BEST WORK, I will give you $100000 bonus.
 	# 	The task is: {INPUT}""",
-    description=f"""The task is: {INPUT}
-		Query a SQL database called 'command_centerdb' using the tools provided for the task.""",
+    description=f"""Query a MySQL database called 'command_centerdb' to accomplish the task: {INPUT}""",
     agent=generator
+)
+
+task2 = Task(
+    description="""Using the SQL table data provided, format the data list to a JSON object.""",
+    agent=json_formattor
 )
 
 # execute = Task(
@@ -98,8 +112,8 @@ task = Task(
 
 # Instantiate your crew with a sequential process
 crew = Crew(
-	agents=[generator],
-	tasks=[task],
+	agents=[generator, json_formattor],
+	tasks=[task1, task2],
 	verbose=2, # You can set it to 1 or 2 to different logging levels
 )
 

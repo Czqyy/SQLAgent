@@ -11,7 +11,7 @@ class SQLTool():
 	def query(sql_query):
 		"""Useful to execute a given SQL query in a MySQL database and return the query result
 		The given SQL query must be in exact MySQL syntax."""
-		cnx = mysql.connector.connect(user='root', password='password', host='127.0.0.1', database='command_centerdb')
+		cnx = mysql.connector.connect(user='root', password='password', host='127.0.0.1', database='sqlagent')
 		cursor = cnx.cursor()
 		result = ""
 		try:

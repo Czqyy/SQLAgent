@@ -6,8 +6,6 @@ from crewai import Agent, Task, Crew
 
 
 def authenticate(agent, username, password):
-    start = time.time()
-
     task = Task(
         description=f"""Username: {username}, password: {password}
         Authenticate these login credentials.""",
@@ -18,9 +16,11 @@ def authenticate(agent, username, password):
 
     # Get your crew to work!
     # result = crew.kickoff()
+    start = time.time()
+    print("STARTING TASK")
     result = task.execute()
     end = time.time()
-    print(f"Process took {end - start}s")
+    print(f"END TASK: {end - start}s")
     response = {
         "status": 200,
         "message": result

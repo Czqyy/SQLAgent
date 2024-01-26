@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew
 # from gpt4all import GPT4All
 from tools.tools import SQLTool
-from langchain_community.llms import Ollama, gpt4all
+# from langchain_community.llms import Ollama, gpt4all
 
 
 start = time.time()

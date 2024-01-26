@@ -18,14 +18,14 @@ path = (
 # language_model = Ollama(model="stablelm-zephyr", temperature=0)
 language_model = GPT4All(model=path)
 
-INPUT = "List all the tables in the database."
+INPUT = "List all the columns in the aspnetroles table in the database."
 
 
 generator = Agent(
 	role='Make SQL Query',
-	goal='Execute SQL queries to a MySQL database',
+	goal='Query a MySQL database',
 	backstory="""You are an expert at MySQL databases. 
-    	Given a task on a database, you MUST query a SQL database to get table data relavant to the task.""",
+    	Given a task on a database, you MUST query a MySQL database to get table data relavant to the task.""",
 	allow_delegation=False,
     tools=[SQLTool().query],
     verbose=True,
@@ -79,8 +79,7 @@ task = Task(
 	# 	Your FINAL ANSWER must be the raw result of the SQL query. 
 	# 	If you do your BEST WORK, I will give you $100000 bonus.
 	# 	The task is: {INPUT}""",
-    description=f"""The task is: {INPUT}
-		Query a SQL database called 'command_centerdb' using the tools provided for the task.""",
+    description=f"""Query a MySQL database called 'command_centerdb' to accomplish the task: {INPUT}""",
     agent=generator
 )
 

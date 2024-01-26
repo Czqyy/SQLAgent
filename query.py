@@ -18,7 +18,7 @@ load_dotenv()
 # language_model = gpt4all.GPT4All(model=path, device='gpu', n_predict=4096, temp=0, max_tokens=1000)
 
 
-INPUT = "List all the users in the database."
+INPUT = "Give me all the data for user with first_name 'Super'."
 
 
 generator = Agent(
@@ -27,7 +27,7 @@ generator = Agent(
 	backstory="""You are an expert at MySQL relational databases.
 		The database consists of tables that are related through foreign key ids.
     	Given a task on a database, you MUST first get a list of all the table names in the database.
-        Then, you MUST query the MySQL database to get table data relavant to the task.""",
+        Then, you MUST execute a SQL query to the MySQL database to accomplish the task.""",
 	allow_delegation=False,
     tools=[SQLTool().query],
     verbose=True
@@ -91,12 +91,12 @@ task1 = Task(
 	# 	Your FINAL ANSWER must be the raw result of the SQL query. 
 	# 	If you do your BEST WORK, I will give you $100000 bonus.
 	# 	The task is: {INPUT}""",
-    description=f"""Query a MySQL database called 'command_centerdb' to accomplish the task: {INPUT}""",
+    description=f"""Make a SQL query to a MySQL database called 'command_centerdb' to accomplish the task: {INPUT}""",
     agent=generator
 )
 
 task2 = Task(
-    description="""Using the SQL table data provided, format the data list to a JSON object.""",
+    description="""Using the SQL query results provided, format the results to a JSON object.""",
     agent=json_formattor
 )
 

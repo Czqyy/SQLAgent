@@ -11,20 +11,20 @@ class SQLTool():
 	def query(sql_query):
 		"""Useful to execute a SQL query in a MySQL database and return the query result
 		The given SQL query must be in exact MySQL syntax."""
-		cnx = mysql.connector.connect(user='root', password='password', host='127.0.0.1', database='sqlagent')
+		cnx = mysql.connector.connect(user='root', password='password', host='127.0.0.1', database='command_centerdb')
 		cursor = cnx.cursor()
 		result = ""
 		try:
 			cursor.execute(sql_query)
 			result = cursor.fetchall()
-			# print("\n###################### QUERY OUTPUT ######################\n")
-			# print(result)
+			cnx.commit()
 		except Exception as e:
-			# print(e)
 			result = f"Something is wrong with the SQL query, you got the error {e}"
 		finally:
 			cnx.close()
 			return result
+
+
 
 
 # class BrowserTools():
@@ -72,5 +72,5 @@ class SQLTool():
 
 
 
-# print(SQLTool().query("SELECT * FROM command_centerdb.aspnetroles"))		
+print(SQLTool().query("UPDATE command_centerdb.aspnetusers SET first_name = 'Jane' WHERE first_name = 'John'"))		
 	
